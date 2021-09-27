@@ -1,3 +1,33 @@
+// Copyright 2021 Logan Stellway. All rights reserved.
+// Use of this source code is governed by a MIT
+// license that can be found in the LICENSE file.
+
+/*
+	Package command extends upon the flag Standard library package: https://pkg.go.dev/flag
+
+	Usage
+
+	Create a new command with an example, option section and a list of subcommands.
+		import (
+			"os"
+			"github.com/lstellway/go/tools/command"
+		)
+
+		func main() {
+			cmd, args := command.NewCommand("example", "Description of the example command", func(c *command.Command) {
+				// Add an example
+				c.AddExample("Run the command with verbose output", "list -verbose true")
+
+				// Add an option section
+				c.AddSection("General Options", func(s *command.CommandSection) {
+					s.BoolVar(&isVerbose, "verbose", false, "Show verbose output")
+				})
+
+				// Define a subcommand
+				c.AddSubcommand("list", "List the available resources")
+			}, os.Args[1:]...)
+		}
+*/
 package command
 
 import (
@@ -6,6 +36,7 @@ import (
 	"strings"
 )
 
+// A CommandExample represents an example usage of the command. You can add examples to a command with the Command.AddExample() function to help users learn how to use your command.
 type CommandExample struct {
 	description string
 	example     string
@@ -22,6 +53,8 @@ type CommandSubcommand struct {
 	name        string
 }
 
+// A Command is a wrapper around the "flag" Standard library package: https://pkg.go.dev/flag
+// This package adds utilities to create more verbose usage screens.
 type Command struct {
 	description string
 	examples    []CommandExample
@@ -90,8 +123,8 @@ func (h *Command) Usage() {
 	h.flagSet.Usage()
 }
 
-// Usage
-func CommandUsage(h *Command) {
+// defaultUsage defines the default usage screen that is displayed when using a "help" flag (-h, -help)
+func (h *Command) defaultUsage() {
 	var help strings.Builder
 
 	// Description
@@ -173,7 +206,8 @@ func CommandUsage(h *Command) {
 	fmt.Fprintf(h.flagSet.Output(), help.String())
 }
 
-// Build a new command helper
+// NewCommand initializes a new Command object.
+// The Command can be configured via a configuration callback function.
 func NewCommand(name string, description string, configure func(h *Command), flags ...string) (Command, []string) {
 	h := Command{
 		name:        name,
@@ -182,7 +216,7 @@ func NewCommand(name string, description string, configure func(h *Command), fla
 	}
 
 	h.flagSet.Usage = func() {
-		CommandUsage(&h)
+		h.defaultUsage()
 	}
 	configure(&h)
 
