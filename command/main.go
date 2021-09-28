@@ -1,32 +1,7 @@
-// Copyright 2021 Logan Stellway. All rights reserved.
-// Use of this source code is governed by a MIT
-// license that can be found in the LICENSE file.
-
 /*
-	Package command extends upon the flag Standard library package: https://pkg.go.dev/flag
+	Package command is used to display verbose, easy-to-understand help pages for your CLI commands.
 
-	Usage
-
-	Create a new command with an example, option section and a list of subcommands.
-		import (
-			"os"
-			"github.com/lstellway/go/tools/command"
-		)
-
-		func main() {
-			cmd, args := command.NewCommand("example", "Description of the example command", func(c *command.Command) {
-				// Add an example
-				c.AddExample("Run the command with verbose output", "list -verbose true")
-
-				// Add an option section
-				c.AddSection("General Options", func(s *command.CommandSection) {
-					s.BoolVar(&isVerbose, "verbose", false, "Show verbose output")
-				})
-
-				// Define a subcommand
-				c.AddSubcommand("list", "List the available resources")
-			}, os.Args[1:]...)
-		}
+	The package extends upon the flag Standard library package: https://pkg.go.dev/flag
 */
 package command
 
@@ -36,142 +11,148 @@ import (
 	"strings"
 )
 
-// A CommandExample represents an example usage of the command. You can add examples to a command with the Command.AddExample() function to help users learn how to use your command.
+// A CommandExample represents an example usage of the command.
+// You can add examples to a command with the Command.AddExample()
+// function to help users learn how to use your command.
 type CommandExample struct {
-	description string
-	example     string
+	Description string // Description of the example use-case
+	Example     string // Verbatim command that can be run
 }
 
+// A CommandSection represents a group of related flags.
+// You can add and configure a section with the Command.AddSection()
+// function.
 type CommandSection struct {
-	flags   []string
-	flagSet *flag.FlagSet
-	name    string
+	Flags   []string      // Flag names that are related to this section
+	FlagSet *flag.FlagSet // Reference to the command FlagSet
+	Name    string        // Name of the section
 }
 
 type CommandSubcommand struct {
-	description string
-	name        string
+	Description string // Command description
+	Name        string // Command name
 }
 
 // A Command is a wrapper around the "flag" Standard library package: https://pkg.go.dev/flag
 // This package adds utilities to create more verbose usage screens.
 type Command struct {
-	description string
-	examples    []CommandExample
-	flagSet     *flag.FlagSet
-	name        string
-	arguments   []string
-	sections    []CommandSection
-	subcommands []CommandSubcommand
+	Usage func()
+
+	Description string              // Command description
+	Examples    []CommandExample    // List of examples
+	FlagSet     *flag.FlagSet       // Reference to command FlagSet
+	Name        string              // Command name
+	Arguments   []string            // Any command-line arguments that are available for the command
+	Sections    []CommandSection    // List of sections
+	Subcommands []CommandSubcommand // List of subcommands
 }
 
-// Add boolean
+// StringVar adds a flag with a boolean value to the FlagSet and groups within a command seciton
 func (s *CommandSection) BoolVar(p *bool, name string, value bool, usage string) {
-	s.flags = append(s.flags, name)
-	s.flagSet.BoolVar(p, name, value, usage)
+	s.Flags = append(s.Flags, name)
+	s.FlagSet.BoolVar(p, name, value, usage)
 }
 
-// Add integer
+// StringVar adds a flag with an integer value to the FlagSet and groups within a command seciton
 func (s *CommandSection) IntVar(p *int, name string, value int, usage string) {
-	s.flags = append(s.flags, name)
-	s.flagSet.IntVar(p, name, value, usage)
+	s.Flags = append(s.Flags, name)
+	s.FlagSet.IntVar(p, name, value, usage)
 }
 
-// Add a flag to a help seciton
+// StringVar adds a flag with a string value to the FlagSet and groups within a command seciton
 func (s *CommandSection) StringVar(p *string, name string, value string, usage string) {
-	s.flags = append(s.flags, name)
-	s.flagSet.StringVar(p, name, value, usage)
+	s.Flags = append(s.Flags, name)
+	s.FlagSet.StringVar(p, name, value, usage)
 }
 
 // Add argument
 func (h *Command) AddArgument(name string) {
-	h.arguments = append(h.arguments, name)
+	h.Arguments = append(h.Arguments, name)
 }
 
-// Add help section
+// AddSection groups related flags together.
+// Grouped flags can help with readability on a usage screen
+// when a command has a large number of options.
 func (h *Command) AddSection(name string, configure func(s *CommandSection)) {
 	section := CommandSection{
-		name:    name,
-		flagSet: h.flagSet,
+		Name:    name,
+		FlagSet: h.FlagSet,
 	}
 
 	// Callback to configure section
 	configure(&section)
-	h.sections = append(h.sections, section)
+	h.Sections = append(h.Sections, section)
 }
 
-// Add a subcommand
+// AddSubcommand defines available subcommands of the current command.
 func (h *Command) AddSubcommand(name string, description string) {
 	child := CommandSubcommand{
-		name:        name,
-		description: description,
+		Name:        name,
+		Description: description,
 	}
-	h.subcommands = append(h.subcommands, child)
+	h.Subcommands = append(h.Subcommands, child)
 }
 
-// Add example
+// AddExample defines example usage of the command.
+// Use it to display use cases in the help screen.
 func (h *Command) AddExample(description string, example string) {
 	e := CommandExample{
-		description: description,
-		example:     example,
+		Description: description,
+		Example:     example,
 	}
-	h.examples = append(h.examples, e)
+	h.Examples = append(h.Examples, e)
 }
 
-// Usage
-func (h *Command) Usage() {
-	h.flagSet.Usage()
-}
-
-// defaultUsage defines the default usage screen that is displayed when using a "help" flag (-h, -help)
+// defaultUsage defines the default usage screen that
+// is displayed when using a "help" flag (-h, -help)
 func (h *Command) defaultUsage() {
 	var help strings.Builder
 
 	// Description
-	if len(h.description) > 0 {
-		fmt.Fprintf(&help, "\n%s\n", h.description)
+	if len(h.Description) > 0 {
+		fmt.Fprintf(&help, "\n%s\n", h.Description)
 	}
 
 	// Command name
-	if len(h.flagSet.Name()) > 0 {
+	if len(h.FlagSet.Name()) > 0 {
 		var a strings.Builder
-		for _, name := range h.arguments {
+		for _, name := range h.Arguments {
 			fmt.Fprintf(&a, " [%s]", name)
 		}
 
 		fmt.Fprintf(&help, "\n\nUsage:\n")
 
-		if len(h.sections) > 0 {
-			fmt.Fprintf(&help, "\n    %s [OPTIONS]%s", h.flagSet.Name(), a.String())
-		} else if len(h.subcommands) > 0 {
-			fmt.Fprintf(&help, "\n    %s COMMAND%s", h.flagSet.Name(), a.String())
+		if len(h.Sections) > 0 {
+			fmt.Fprintf(&help, "\n    %s [OPTIONS]%s", h.FlagSet.Name(), a.String())
+		} else if len(h.Subcommands) > 0 {
+			fmt.Fprintf(&help, "\n    %s COMMAND%s", h.FlagSet.Name(), a.String())
 		} else {
-			fmt.Fprintf(&help, "\n    %s%s", h.flagSet.Name(), a.String())
+			fmt.Fprintf(&help, "\n    %s%s", h.FlagSet.Name(), a.String())
 		}
 
 		fmt.Fprintf(&help, "\n")
 	}
 
 	// Examples
-	if len(h.examples) > 0 {
+	if len(h.Examples) > 0 {
 		fmt.Fprintf(&help, "\n\nExamples:\n")
 
-		for _, e := range h.examples {
-			if e.description != "" {
-				fmt.Fprintf(&help, "\n    %s:", e.description)
+		for _, e := range h.Examples {
+			if e.Description != "" {
+				fmt.Fprintf(&help, "\n    %s:", e.Description)
 			}
-			fmt.Fprintf(&help, "\n      %s %s\n", h.flagSet.Name(), e.example)
+			fmt.Fprintf(&help, "\n      %s %s\n", h.FlagSet.Name(), e.Example)
 		}
 	}
 
 	// Sections
-	if len(h.sections) > 0 {
-		for _, section := range h.sections {
-			fmt.Fprintf(&help, "\n\n%s:\n", section.name)
+	if len(h.Sections) > 0 {
+		for _, section := range h.Sections {
+			fmt.Fprintf(&help, "\n\n%s:\n", section.Name)
 
-			for _, name := range section.flags {
+			for _, name := range section.Flags {
 				// Get flag
-				f := h.flagSet.Lookup(name)
+				f := h.FlagSet.Lookup(name)
 
 				// Default value
 				defValue := ""
@@ -192,34 +173,36 @@ func (h *Command) defaultUsage() {
 	}
 
 	// Subcommands
-	if len(h.subcommands) > 0 {
+	if len(h.Subcommands) > 0 {
 		fmt.Fprintf(&help, "\n\nCommands:\n")
 
-		for _, s := range h.subcommands {
-			fmt.Fprintf(&help, "\n    %s", s.name)
-			fmt.Fprintf(&help, "\n      %s\n", s.description)
+		for _, s := range h.Subcommands {
+			fmt.Fprintf(&help, "\n    %s", s.Name)
+			fmt.Fprintf(&help, "\n      %s\n", s.Description)
 		}
 
-		fmt.Fprintf(&help, "\n\nRun '%s COMMAND' for more information on a command.\n", h.flagSet.Name())
+		fmt.Fprintf(&help, "\n\nRun '%s COMMAND' for more information on a command.\n", h.FlagSet.Name())
 	}
 
-	fmt.Fprintf(h.flagSet.Output(), help.String())
+	fmt.Fprintf(h.FlagSet.Output(), help.String())
 }
 
 // NewCommand initializes a new Command object.
 // The Command can be configured via a configuration callback function.
 func NewCommand(name string, description string, configure func(h *Command), flags ...string) (Command, []string) {
 	h := Command{
-		name:        name,
-		description: description,
-		flagSet:     flag.NewFlagSet(name, flag.ExitOnError),
+		Name:        name,
+		Description: description,
+		FlagSet:     flag.NewFlagSet(name, flag.ExitOnError),
 	}
 
-	h.flagSet.Usage = func() {
-		h.defaultUsage()
+	// Wire default usage and link to FlagSet
+	h.Usage = h.defaultUsage
+	h.FlagSet.Usage = func() {
+		h.Usage()
 	}
 	configure(&h)
 
-	h.flagSet.Parse(flags)
-	return h, h.flagSet.Args()
+	h.FlagSet.Parse(flags)
+	return h, h.FlagSet.Args()
 }
