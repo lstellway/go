@@ -1,19 +1,21 @@
-package recipe
+package temperature
 
 import (
 	"fmt"
+
+	"github.com/lstellway/go/measure"
 )
 
 var (
-	Celcius   = Unit{Singular: "Degree Celcius", Plural: "Degrees Celcius", Abbreviation: "°C"}
-	Farenheit = Unit{Singular: "Degree Farenheit", Plural: "Degrees Farenheit", Abbreviation: "°F"}
-	Kelvin    = Unit{Singular: "Degree Kelvin", Plural: "Degrees Kelvin", Abbreviation: "K"}
-	Rankine   = Unit{Singular: "Degree Rankine", Plural: "Degrees Rankine", Abbreviation: "°Ra"}
-	Reaumur   = Unit{Singular: "Degree Réaumur", Plural: "Degrees Réaumur", Abbreviation: "°Re"}
+	Celcius   = measure.Unit{Singular: "Degree Celcius", Plural: "Degrees Celcius", Abbreviation: "°C"}
+	Farenheit = measure.Unit{Singular: "Degree Farenheit", Plural: "Degrees Farenheit", Abbreviation: "°F"}
+	Kelvin    = measure.Unit{Singular: "Degree Kelvin", Plural: "Degrees Kelvin", Abbreviation: "K"}
+	Rankine   = measure.Unit{Singular: "Degree Rankine", Plural: "Degrees Rankine", Abbreviation: "°Ra"}
+	Reaumur   = measure.Unit{Singular: "Degree Réaumur", Plural: "Degrees Réaumur", Abbreviation: "°Re"}
 )
 
 type Temperature struct {
-	Measurement Measurement
+	Measurement measure.Measurement
 }
 
 // Convert a value in degrees Celcius to degrees Farenheit

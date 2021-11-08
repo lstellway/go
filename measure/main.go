@@ -1,4 +1,4 @@
-package recipe
+package measure
 
 import (
 	"fmt"
@@ -31,6 +31,8 @@ type Measurement struct {
 }
 
 var (
+	Yotta = SIUnit{"Yotta", "Y", 24}
+	Zetta = SIUnit{"Zetta", "Z", 21}
 	Exa   = SIUnit{"Exa", "E", 18}
 	Peta  = SIUnit{"Peta", "P", 15}
 	Tera  = SIUnit{"Tera", "T", 12}
@@ -47,6 +49,8 @@ var (
 	Pico  = SIUnit{"Pico", "p", -12}
 	Femto = SIUnit{"Femto", "f", -15}
 	Atto  = SIUnit{"Atto", "a", -18}
+	Zepto = SIUnit{"Zepto", "z", -21}
+	Yocto = SIUnit{"Yocto", "y", -24}
 )
 
 // The Unit method builds a Unit object from the SIUnit object.
@@ -69,4 +73,9 @@ func (u *Unit) RatioToOne(value float64) float64 {
 // OneToRatio converts a base "1" value to its equivalent using the Unit Ratio
 func (u *Unit) OneToRatio(value float64) float64 {
 	return value / u.Ratio
+}
+
+// RelativeRatio gets the ratio factor of a relative / comparable unit
+func (u *Unit) RelativeRatio(consequent Unit) float64 {
+	return u.Ratio / consequent.Ratio
 }
