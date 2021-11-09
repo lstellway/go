@@ -1,16 +1,12 @@
+/**
+The measure package provides a unified API for converting between units of measure.
+*/
 package measure
 
 import (
 	"fmt"
 	"math"
 )
-
-// TODO: Units of measurement (Speed, Acceleration, Power, Time, Light Intensity)
-// @see https://www.theedkins.co.uk/jo/units/other.htm
-// Metric System
-// @see https://www.theedkins.co.uk/jo/units/metric.htm
-// SI (time, length, mass, electric current, thermodynamic temperature, amount of substance, luminous intensity)
-// https://en.wikipedia.org/wiki/International_System_of_Units
 
 type SIUnit struct {
 	Name         string
@@ -31,26 +27,26 @@ type Measurement struct {
 }
 
 var (
-	Yotta = SIUnit{"Yotta", "Y", 24}
-	Zetta = SIUnit{"Zetta", "Z", 21}
-	Exa   = SIUnit{"Exa", "E", 18}
-	Peta  = SIUnit{"Peta", "P", 15}
-	Tera  = SIUnit{"Tera", "T", 12}
-	Giga  = SIUnit{"Giga", "G", 9}
-	Mega  = SIUnit{"Mega", "M", 6}
-	Kilo  = SIUnit{"Kilo", "k", 3}
-	Hecto = SIUnit{"Hecto", "h", 2}
-	Deca  = SIUnit{"Deca", "da", 1}
-	Deci  = SIUnit{"Deci", "d", -1}
-	Centi = SIUnit{"Centi", "c", -2}
-	Milli = SIUnit{"Milli", "m", -3}
-	Micro = SIUnit{"Micro", "μ", -6}
-	Nano  = SIUnit{"Nano", "n", -9}
-	Pico  = SIUnit{"Pico", "p", -12}
-	Femto = SIUnit{"Femto", "f", -15}
-	Atto  = SIUnit{"Atto", "a", -18}
-	Zepto = SIUnit{"Zepto", "z", -21}
-	Yocto = SIUnit{"Yocto", "y", -24}
+	Yotta = SIUnit{Name: "Yotta", Abbreviation: "Y", Power: 24}
+	Zetta = SIUnit{Name: "Zetta", Abbreviation: "Z", Power: 21}
+	Exa   = SIUnit{Name: "Exa", Abbreviation: "E", Power: 18}
+	Peta  = SIUnit{Name: "Peta", Abbreviation: "P", Power: 15}
+	Tera  = SIUnit{Name: "Tera", Abbreviation: "T", Power: 12}
+	Giga  = SIUnit{Name: "Giga", Abbreviation: "G", Power: 9}
+	Mega  = SIUnit{Name: "Mega", Abbreviation: "M", Power: 6}
+	Kilo  = SIUnit{Name: "Kilo", Abbreviation: "k", Power: 3}
+	Hecto = SIUnit{Name: "Hecto", Abbreviation: "h", Power: 2}
+	Deca  = SIUnit{Name: "Deca", Abbreviation: "da", Power: 1}
+	Deci  = SIUnit{Name: "Deci", Abbreviation: "d", Power: -1}
+	Centi = SIUnit{Name: "Centi", Abbreviation: "c", Power: -2}
+	Milli = SIUnit{Name: "Milli", Abbreviation: "m", Power: -3}
+	Micro = SIUnit{Name: "Micro", Abbreviation: "μ", Power: -6}
+	Nano  = SIUnit{Name: "Nano", Abbreviation: "n", Power: -9}
+	Pico  = SIUnit{Name: "Pico", Abbreviation: "p", Power: -12}
+	Femto = SIUnit{Name: "Femto", Abbreviation: "f", Power: -15}
+	Atto  = SIUnit{Name: "Atto", Abbreviation: "a", Power: -18}
+	Zepto = SIUnit{Name: "Zepto", Abbreviation: "z", Power: -21}
+	Yocto = SIUnit{Name: "Yocto", Abbreviation: "y", Power: -24}
 )
 
 // The Unit method builds a Unit object from the SIUnit object.
