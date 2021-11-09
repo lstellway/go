@@ -20,6 +20,16 @@ type Volume struct {
 	Measurement measure.Measurement
 }
 
+// CreateVolume builds a Volume struct with a specified unit and Volume value
+func CreateVolume(unit measure.Unit, value float64) Volume {
+	return Volume{
+		Measurement: measure.Measurement{
+			Value: value,
+			Unit:  unit,
+		},
+	}
+}
+
 // Convert a value in cubic metres to cubic litres
 func CubicMetreToLitre(value float64) float64 {
 	return value * LitreToCubicMetreRatio

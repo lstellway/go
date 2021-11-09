@@ -18,6 +18,16 @@ type Temperature struct {
 	Measurement measure.Measurement
 }
 
+// CreateTemperature builds a Temperature struct with a specified unit and Temperature value
+func CreateTemperature(unit measure.Unit, value float64) Temperature {
+	return Temperature{
+		Measurement: measure.Measurement{
+			Value: value,
+			Unit:  unit,
+		},
+	}
+}
+
 // Convert a value in degrees Celcius to degrees Farenheit
 func CelciusToFarenheit(value float64) float64 {
 	return (value * 9 / 5) + 32

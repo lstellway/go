@@ -12,6 +12,16 @@ type Mass struct {
 	Measurement measure.Measurement
 }
 
+// CreateMass builds a Mass struct with a specified unit and Mass value
+func CreateMass(unit measure.Unit, value float64) Mass {
+	return Mass{
+		Measurement: measure.Measurement{
+			Value: value,
+			Unit:  unit,
+		},
+	}
+}
+
 // OunceToGram converts a value provided in ounces to grams
 func OunceToGram(value float64) float64 {
 	return value * OunceToGramRatio
