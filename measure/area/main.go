@@ -12,6 +12,10 @@ var (
 	SquareMetreToSquareFootRatio = math.Pow(length.MetreToFootRatio, 2)
 )
 
+type Area struct {
+	Measurement measure.Measurement
+}
+
 // SquareFeetToSquareMetres converts a given value in Square Feet to its equivalent in Square Metres
 func SquareFeetToSquareMetres(value float64) float64 {
 	return value / SquareMetreToSquareFootRatio
@@ -20,8 +24,4 @@ func SquareFeetToSquareMetres(value float64) float64 {
 // SquareMetresToSquareFeet converts a given value in Square Metres to its equivalent Square Feet
 func SquareMetresToSquareFeet(value float64) float64 {
 	return value * SquareMetreToSquareFootRatio
-}
-
-type Area struct {
-	Measurement measure.Measurement
 }

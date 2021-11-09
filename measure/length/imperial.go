@@ -13,7 +13,8 @@ var (
 // ConvertToFoot is a helper to convert a length value from Metres to its equivalent in Feet
 func (l *Length) ConvertToFeet(unit measure.Unit) (error, float64) {
 	return l.ConvertFromMetre(func(value float64) float64 {
-		return unit.OneToRatio(MetresToFeet(value))
+		feet := MetresToFeet(value)
+		return unit.OneToRatio(feet)
 	})
 }
 

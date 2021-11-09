@@ -81,6 +81,7 @@ func (t *Temperature) Celcius() (error, float64) {
 	return nil, t.Measurement.Value
 }
 
+// ConvertFromCelcius is a helper to convert a temperature value from its value in Celcius
 func (t *Temperature) ConvertFromCelcius(handle func(float64) float64) (error, float64) {
 	err, celcius := t.Celcius()
 	if err != nil {

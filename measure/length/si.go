@@ -34,11 +34,19 @@ var (
 // Metres converts a length to its equivalent in metres
 func (l *Length) Metre() (error, float64) {
 	switch l.Measurement.Unit {
-	case Metre:
-		// Value is already in metres
-	case Yottametre, Zettametre, Exametre, Petametre, Terametre, Gigametre, Megametre, Kilometre, Hectometre, Decametre, Decimetre, Centimetre, Millimetre, Micrometre, Nanometre, Picometre, Femtometre, Attometre, Zeptometre, Yoctometre:
-		l.Measurement.Value = l.Measurement.Unit.OneToRatio(l.Measurement.Value)
-	case Foot, Inch, Yard, Mile, Furlong, Chain, Link, Rod, RamsdenChain, NauticalMile, Cable, Fathom, Shackle, League:
+	// International System of Units (SI)
+	case Metre, Yottametre, Zettametre, Exametre, Petametre, Terametre, Gigametre, Megametre, Kilometre, Hectometre, Decametre, Decimetre, Centimetre, Millimetre, Micrometre, Nanometre, Picometre, Femtometre, Attometre, Zeptometre, Yoctometre:
+		l.Measurement.Value = l.Measurement.Unit.RatioToOne(l.Measurement.Value)
+	// Imperial
+	case Foot, Inch, Yard, Mile:
+		feet := l.Measurement.Unit.RatioToOne(l.Measurement.Value)
+		l.Measurement.Value = FeetToMetres(feet)
+	// Land
+	case Furlong, Chain, Link, Rod, RamsdenChain:
+		feet := l.Measurement.Unit.RatioToOne(l.Measurement.Value)
+		l.Measurement.Value = FeetToMetres(feet)
+	// Nautical
+	case NauticalMile, Cable, Fathom, Shackle, League:
 		feet := l.Measurement.Unit.RatioToOne(l.Measurement.Value)
 		l.Measurement.Value = FeetToMetres(feet)
 	default:

@@ -34,7 +34,8 @@ func (v *Volume) ConvertToUnitFromUSGallons(unit measure.Unit) (error, float64) 
 	return v.ConvertFromLitre(func(value float64) float64 {
 		cubicMetres := LitreToCubicMetre(value)
 		cubicFeet := CubicMetresToCubicFeet(cubicMetres)
-		usGallons := CubicInchesToUSGallons(cubicFeet * CubicInch.RelativeRatio(CubicFoot))
+		cubicInches := cubicFeet * CubicInch.RelativeRatio(CubicFoot)
+		usGallons := CubicInchesToUSGallons(cubicInches)
 		return unit.OneToRatio(usGallons)
 	})
 }

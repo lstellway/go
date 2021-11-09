@@ -19,7 +19,8 @@ var (
 // ConvertToFoot is a helper to convert a length value from Metres to its equivalent in Feet
 func (a *Area) ConvertToUnitFromSquareFeet(unit measure.Unit) (error, float64) {
 	return a.ConvertFromSquareMetre(func(value float64) float64 {
-		return unit.OneToRatio(SquareMetresToSquareFeet(value))
+		squareFeet := SquareMetresToSquareFeet(value)
+		return unit.OneToRatio(squareFeet)
 	})
 }
 

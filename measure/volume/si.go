@@ -57,20 +57,31 @@ var (
 // Litre converts a volume to its equivalent in Litres
 func (v *Volume) Litre() (error, float64) {
 	switch v.Measurement.Unit {
-	// Litre
+	// Litre - International System of Units (SI)
 	case Litre, Yottalitre, Zettalitre, Exalitre, Petalitre, Teralitre, Gigalitre, Megalitre, Kilolitre, Hectolitre, Decalitre, Decilitre, Centilitre, Millilitre, Microlitre, Nanolitre, Picolitre, Femtolitre, Attolitre, Zeptolitre, Yoctolitre:
-		v.Measurement.Value = v.Measurement.Unit.OneToRatio(v.Measurement.Value)
-	// Cubic metre
+		v.Measurement.Value = v.Measurement.Unit.RatioToOne(v.Measurement.Value)
+	// Cubic Metre - International System of Units (SI)
 	case CubicMetre, CubicYottametre, CubicZettametre, CubicExametre, CubicPetametre, CubicTerametre, CubicGigametre, CubicMegametre, CubicKilometre, CubicHectometre, CubicDecametre, CubicDecimetre, CubicCentimetre, CubicMillimetre, CubicMicrometre, CubicNanometre, CubicPicometre, CubicFemtometre, CubicAttometre:
 		v.Measurement.Value = CubicMetreToLitre(v.Measurement.Unit.RatioToOne(v.Measurement.Value))
-	// Based on litre
+	// Metric (based on Litre)
 	case MetricCup, MetricTeaspoon, MetricDessertspoon, MetricTablespoon, MetricPint, MetricQuart, MetricGallon:
-		v.Measurement.Value = v.Measurement.Unit.OneToRatio(v.Measurement.Value)
+		v.Measurement.Value = v.Measurement.Unit.RatioToOne(v.Measurement.Value)
 	// Imperial
-	case CubicFoot, CubicInch, CubicYard, CubicMile, CubicFurlong, CubicChain, CubicLink, CubicRod, CubicRamsdenChain, CubicNauticalMile, CubicCable, CubicFathom, CubicShackle, CubicLeague:
-		cubicFeet := v.Measurement.Unit.RatioToOne(v.Measurement.Value)
-		cubicMetres := CubicFeetToCubicMetres(cubicFeet)
-		v.Measurement.Value = CubicMetreToLitre(cubicMetres)
+	case CubicFoot, CubicInch, CubicYard, CubicMile:
+		v.Measurement.Value = v.ImperialToLitre()
+	// Land
+	case CubicFurlong, CubicChain, CubicLink, CubicRod, CubicRamsdenChain:
+		v.Measurement.Value = v.ImperialToLitre()
+	// Nautical
+	case CubicNauticalMile, CubicCable, CubicFathom, CubicShackle, CubicLeague:
+		v.Measurement.Value = v.ImperialToLitre()
+	// U.S. Liquid
+	case USGallon, USQuart, USPint, USGill, USJack, USCup, USFluidOunce, USFluidDram, USMinim, USTeaspoon, USDessertspoon, USTablespoon, USOilBarrel, USBeerBarrel, USKeg:
+		v.Measurement.Value = v.USGallonToLitre()
+	// U.S. Dry
+	case USDryGallon, USPeck, USBushel, USDryQuart, USDryPint, USDryBarrel:
+		usDryGallons := v.Measurement.Unit.RatioToOne(v.Measurement.Value)
+		v.Measurement.Value = USDryGallonsToLitres(usDryGallons)
 	default:
 		err := fmt.Errorf("Unknown volume unit, %v", v.Measurement.Unit)
 		return err, 0
@@ -90,6 +101,22 @@ func (v *Volume) ConvertFromLitre(handle func(float64) float64) (error, float64)
 	}
 
 	return nil, handle(litre)
+}
+
+// ImperialToLitre converts an imperial volume to its equivalent in Litres
+func (v *Volume) ImperialToLitre() float64 {
+	cubicFeet := v.Measurement.Unit.RatioToOne(v.Measurement.Value)
+	cubicMetres := CubicFeetToCubicMetres(cubicFeet)
+	return CubicMetreToLitre(cubicMetres)
+}
+
+// USGallonToLitre converts a given volume expressed in US Gallons to its equivalent in Litres
+func (v *Volume) USGallonToLitre() float64 {
+	usGallons := v.Measurement.Unit.RatioToOne(v.Measurement.Value)
+	cubicInches := USGallonsToCubicInches(usGallons)
+	cubicFeet := cubicInches * CubicFoot.RelativeRatio(CubicInch)
+	cubicMetres := CubicFeetToCubicMetres(cubicFeet)
+	return CubicMetreToLitre(cubicMetres)
 }
 
 // Yottalitre converts a volume to its equivalent in Yottalitres
@@ -195,7 +222,8 @@ func (v *Volume) Yoctolitre() (error, float64) {
 // ConvertFromLitre is a helper to convert a value to cubic metres
 func (v *Volume) ConvertToUnitFromCubicMetres(unit measure.Unit) (error, float64) {
 	return v.ConvertFromLitre(func(value float64) float64 {
-		return unit.OneToRatio(LitreToCubicMetre(value))
+		cubicMetres := LitreToCubicMetre(value)
+		return unit.OneToRatio(cubicMetres)
 	})
 }
 

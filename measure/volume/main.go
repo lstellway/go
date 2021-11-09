@@ -16,6 +16,10 @@ var (
 	USGallonToCubicInchRatio   = float64(231)
 )
 
+type Volume struct {
+	Measurement measure.Measurement
+}
+
 // Convert a value in cubic metres to cubic litres
 func CubicMetreToLitre(value float64) float64 {
 	return value * LitreToCubicMetreRatio
@@ -64,8 +68,4 @@ func CubicInchesToUSGallons(value float64) float64 {
 // USGallonsToCubicInches converts a given value from US Gallons to its equivalent in Cubic Inches
 func USGallonsToCubicInches(value float64) float64 {
 	return value * USGallonToCubicInchRatio
-}
-
-type Volume struct {
-	Measurement measure.Measurement
 }

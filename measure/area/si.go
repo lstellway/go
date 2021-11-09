@@ -36,11 +36,19 @@ var (
 // SquareMetre converts an area to its equivalent in square metres
 func (a *Area) SquareMetre() (error, float64) {
 	switch a.Measurement.Unit {
-	case SquareMetre:
-		// Value is already in Square Metres
-	case SquareYottametre, SquareZettametre, SquareExametre, SquarePetametre, SquareTerametre, SquareGigametre, SquareMegametre, SquareKilometre, SquareHectometre, SquareDecametre, SquareDecimetre, SquareCentimetre, SquareMillimetre, SquareMicrometre, SquareNanometre, SquarePicometre, SquareFemtometre, SquareAttometre, SquareZeptometre, SquareYoctometre:
-		a.Measurement.Value = a.Measurement.Unit.OneToRatio(a.Measurement.Value)
-	case SquareFoot, SquareInch, SquareYard, SquareMile, SquareFurlong, SquareChain, SquareLink, SquareRod, SquareRamsdenChain, Rood, Acre, SquareNauticalMile, SquareCable, SquareFathom, SquareShackle, SquareLeague:
+	// International System of Units (SI)
+	case SquareMetre, SquareYottametre, SquareZettametre, SquareExametre, SquarePetametre, SquareTerametre, SquareGigametre, SquareMegametre, SquareKilometre, SquareHectometre, SquareDecametre, SquareDecimetre, SquareCentimetre, SquareMillimetre, SquareMicrometre, SquareNanometre, SquarePicometre, SquareFemtometre, SquareAttometre, SquareZeptometre, SquareYoctometre:
+		a.Measurement.Value = a.Measurement.Unit.RatioToOne(a.Measurement.Value)
+	// Imperial
+	case SquareFoot, SquareInch, SquareYard, SquareMile:
+		squareFeet := a.Measurement.Unit.RatioToOne(a.Measurement.Value)
+		a.Measurement.Value = SquareFeetToSquareMetres(squareFeet)
+	// Land
+	case SquareFurlong, SquareChain, SquareLink, SquareRod, SquareRamsdenChain, Rood, Acre:
+		squareFeet := a.Measurement.Unit.RatioToOne(a.Measurement.Value)
+		a.Measurement.Value = SquareFeetToSquareMetres(squareFeet)
+	// Nautical
+	case SquareNauticalMile, SquareCable, SquareFathom, SquareShackle, SquareLeague:
 		squareFeet := a.Measurement.Unit.RatioToOne(a.Measurement.Value)
 		a.Measurement.Value = SquareFeetToSquareMetres(squareFeet)
 	default:
