@@ -6,14 +6,19 @@ package measure
 import (
 	"fmt"
 	"math"
+	"math/big"
 )
 
+// SIUnit stands for the International System of Units
+// @see https://en.wikipedia.org/wiki/International_System_of_Units
 type SIUnit struct {
 	Name         string
 	Abbreviation string
 	Power        int
 }
 
+// Unit represents a unit of Measurement
+// @see https://en.wikipedia.org/wiki/Unit_of_measurement
 type Unit struct {
 	Singular     string
 	Plural       string
@@ -21,11 +26,14 @@ type Unit struct {
 	Ratio        float64
 }
 
+// Measurement is the quantification of attributes of an object or event
+// @see https://en.wikipedia.org/wiki/Measurement
 type Measurement struct {
 	Unit  Unit
 	Value float64
 }
 
+// Define the standard ratios used by the International System of Units
 var (
 	Yotta = SIUnit{Name: "Yotta", Abbreviation: "Y", Power: 24}
 	Zetta = SIUnit{Name: "Zetta", Abbreviation: "Z", Power: 21}
@@ -63,15 +71,24 @@ func (u *SIUnit) Unit(nameFormat string, abbreviationFormat string) Unit {
 
 // RatioToOne converts a value to its base "1" equivalent using the Unit Ratio
 func (u *Unit) RatioToOne(value float64) float64 {
-	return value * u.Ratio
+	bigValue := big.NewFloat(value)
+	bigRatio := big.NewFloat(u.Ratio)
+	product, _ := big.NewFloat(0).Mul(bigValue, bigRatio).Float64()
+	return product
 }
 
 // OneToRatio converts a base "1" value to its equivalent using the Unit Ratio
 func (u *Unit) OneToRatio(value float64) float64 {
-	return value / u.Ratio
+	bigValue := big.NewFloat(value)
+	bigRatio := big.NewFloat(u.Ratio)
+	quotient, _ := big.NewFloat(0).Quo(bigValue, bigRatio).Float64()
+	return quotient
 }
 
 // RelativeRatio gets the ratio factor of a relative / comparable unit
 func (u *Unit) RelativeRatio(consequent Unit) float64 {
-	return u.Ratio / consequent.Ratio
+	bigRatio := big.NewFloat(u.Ratio)
+	bigConsequent := big.NewFloat(consequent.Ratio)
+	quotient, _ := big.NewFloat(0).Quo(bigRatio, bigConsequent).Float64()
+	return quotient
 }

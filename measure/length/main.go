@@ -1,12 +1,17 @@
 package length
 
 import (
+	"math/big"
 	"github.com/lstellway/go/measure"
 )
 
 var (
-	// Ratios
-	MetreToFootRatio = 39.37 / 12
+	MetresPerFoot float64 = 39.37
+
+	MetreToFootRatio = big.NewFloat(0).Quo(
+		big.NewFloat(MetresPerFoot),
+		big.NewFloat(InchesPerFoot),
+	)
 )
 
 type Length struct {
@@ -25,10 +30,15 @@ func CreateLength(unit measure.Unit, value float64) Length {
 
 // FeetToMetres converts a given value in Feet to its equivalent in Metres
 func FeetToMetres(value float64) float64 {
-	return value / MetreToFootRatio
+	bigValue := big.NewFloat(value)
+	quotient, _ := big.NewFloat(0).Quo(bigValue, MetreToFootRatio).Float64()
+	return quotient
 }
 
 // MetresToFeet converts a given value in Metres to its equivalent Feet
 func MetresToFeet(value float64) float64 {
-	return value * MetreToFootRatio
+	bigValue := big.NewFloat(value)
+	product, _ := big.NewFloat(0).Mul(bigValue, MetreToFootRatio).Float64()
+	return product
 }
+

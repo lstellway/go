@@ -8,25 +8,31 @@ import (
 
 var (
 	// International System of Units (meters)
-	Metre      = measure.Unit{Singular: "Metre", Plural: "Metres", Abbreviation: "m", Ratio: 1}
+	Metre = measure.Unit{
+		Singular: "Metre",
+		Plural: "Metres",
+		Abbreviation: "m",
+		Ratio: 1,
+	}
+
 	Yottametre = measure.Yotta.Unit("%smetre", "%sm")
 	Zettametre = measure.Zetta.Unit("%smetre", "%sm")
-	Exametre   = measure.Exa.Unit("%smetre", "%sm")
-	Petametre  = measure.Peta.Unit("%smetre", "%sm")
-	Terametre  = measure.Tera.Unit("%smetre", "%sm")
-	Gigametre  = measure.Giga.Unit("%smetre", "%sm")
-	Megametre  = measure.Mega.Unit("%smetre", "%sm")
-	Kilometre  = measure.Kilo.Unit("%smetre", "%sm")
+	Exametre = measure.Exa.Unit("%smetre", "%sm")
+	Petametre = measure.Peta.Unit("%smetre", "%sm")
+	Terametre = measure.Tera.Unit("%smetre", "%sm")
+	Gigametre = measure.Giga.Unit("%smetre", "%sm")
+	Megametre = measure.Mega.Unit("%smetre", "%sm")
+	Kilometre = measure.Kilo.Unit("%smetre", "%sm")
 	Hectometre = measure.Hecto.Unit("%smetre", "%sm")
-	Decametre  = measure.Deca.Unit("%smetre", "%sm")
-	Decimetre  = measure.Deci.Unit("%smetre", "%sm")
+	Decametre = measure.Deca.Unit("%smetre", "%sm")
+	Decimetre = measure.Deci.Unit("%smetre", "%sm")
 	Centimetre = measure.Centi.Unit("%smetre", "%sm")
 	Millimetre = measure.Milli.Unit("%smetre", "%sm")
 	Micrometre = measure.Micro.Unit("%smetre", "%sm")
-	Nanometre  = measure.Nano.Unit("%smetre", "%sm")
-	Picometre  = measure.Pico.Unit("%smetre", "%sm")
+	Nanometre = measure.Nano.Unit("%smetre", "%sm")
+	Picometre = measure.Pico.Unit("%smetre", "%sm")
 	Femtometre = measure.Femto.Unit("%smetre", "%sm")
-	Attometre  = measure.Atto.Unit("%smetre", "%sm")
+	Attometre = measure.Atto.Unit("%smetre", "%sm")
 	Zeptometre = measure.Zepto.Unit("%smetre", "%sm")
 	Yoctometre = measure.Yocto.Unit("%smetre", "%sm")
 )
